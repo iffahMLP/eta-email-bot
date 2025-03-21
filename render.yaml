@@ -1,0 +1,40 @@
+services:
+  - name: shopify-bot
+    type: web
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+
+  - name: order-worker
+    type: worker
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python worker.py"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+  - name: email-scheduler
+    type: cron
+    env: python
+    schedule: "0 16 * * 1-5" # Runs at 4 PM Monday to Friday
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python email_scheduler.py"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
